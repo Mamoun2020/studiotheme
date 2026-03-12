@@ -3,54 +3,92 @@
 |------------------|---------|---------------------------------|
 | cart             | object  |                                 |
 | cart.items_count | int     |                                 |
-| cart.total       | string  | Formatted total ex: "١٠٠ ر.س"   |
+| cart.total       | string  | Formatted total ex: "100 ر.س"   |
+|                  |         |                                 |
+| CUSTOM FIGMA TOP NAVBAR                                    |
+| Uses store.contacts global variable (no custom component)  |
+| store.contacts.phone    → Phone number                     |
+| store.contacts.mobile   → Mobile number                    |
+| store.contacts.email    → Email address                    |
 #}
 {% set important_links = theme.settings.get('important_links') %}
 <header class="store-header">
-  {# Top Nav #}
-  <div class="top-navbar">
-    <div class="container flex justify-between">
-      <div class="flex-1 flex items-center gap-2">
-          {# Footer Menu #}
+
+  {# Custom Top Navbar — Uses store.contacts global var (no custom component needed) #}
+  <div class="top-navbar custom-topnav">
+    <div class="container">
+
+      {# Desktop Layout #}
+      <div class="custom-topnav__desktop">
+
+        {# RIGHT SIDE (RTL): Phone & Email using store.contacts #}
+        <div class="custom-topnav__contact">
+          {% set phone = store.contacts.phone ?? store.contacts.mobile %}
+          {% if phone %}
+            <a href="tel:{{ phone }}" class="custom-topnav__contact-item">
+              <svg class="custom-topnav__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.36797 15.1693C5.1213 15.1693 5.91464 14.9893 6.73464 14.6426C7.53464 14.3026 8.3413 13.8359 9.12797 13.2693C9.90797 12.6959 10.6613 12.0559 11.3746 11.3559C12.0813 10.6426 12.7213 9.88927 13.288 9.11594C13.8613 8.31594 14.3213 7.51594 14.648 6.7426C14.9946 5.91594 15.168 5.11594 15.168 4.3626C15.168 3.8426 15.0746 3.34927 14.8946 2.88927C14.708 2.41594 14.408 1.97594 14.0013 1.59594C13.488 1.08927 12.9013 0.835938 12.2746 0.835938C12.0146 0.835938 11.748 0.895938 11.5213 1.0026C11.2613 1.1226 11.0413 1.3026 10.8813 1.5426L9.33464 3.7226C9.19464 3.91594 9.08797 4.1026 9.01464 4.28927C8.92797 4.48927 8.8813 4.68927 8.8813 4.8826C8.8813 5.13594 8.95464 5.3826 9.09464 5.61594C9.19464 5.79594 9.34797 5.98927 9.5413 6.1826L9.99464 6.65594C9.98797 6.67594 9.9813 6.68927 9.97464 6.7026C9.89464 6.8426 9.73464 7.0826 9.42797 7.4426C9.1013 7.81594 8.79463 8.15594 8.48797 8.46927C8.09464 8.85594 7.76797 9.1626 7.4613 9.41594C7.0813 9.73594 6.83463 9.89594 6.68797 9.96927L6.7013 10.0026L6.21463 9.5226C6.00797 9.31594 5.80797 9.1626 5.61464 9.0626C5.24797 8.83594 4.7813 8.79594 4.31463 8.98927C4.1413 9.0626 3.95463 9.1626 3.75463 9.3026L1.5413 10.8759C1.29463 11.0426 1.11464 11.2559 1.00797 11.5093C0.907969 11.7626 0.861302 11.9959 0.861302 12.2293C0.861302 12.5493 0.934635 12.8693 1.07464 13.1693C1.21464 13.4693 1.38797 13.7293 1.60797 13.9693C1.98797 14.3893 2.4013 14.6893 2.8813 14.8826C3.3413 15.0693 3.8413 15.1693 4.36797 15.1693Z" fill="#62D0B6"/>
+                <path d="M3.66667 6.4974C3.94 6.4974 4.16667 6.27073 4.16667 5.9974C4.16667 5.7574 4.40667 5.2574 4.80667 4.83073C5.2 4.41073 5.63333 4.16406 6 4.16406C6.27333 4.16406 6.5 3.9374 6.5 3.66406C6.5 3.39073 6.27333 3.16406 6 3.16406C5.35333 3.16406 4.67333 3.51073 4.08 4.14406C3.52667 4.7374 3.16667 5.46406 3.16667 5.9974C3.16667 6.27073 3.39333 6.4974 3.66667 6.4974Z" fill="#62D0B6"/>
+                <path d="M1.33333 6.5026C1.60667 6.5026 1.83333 6.27594 1.83333 6.0026C1.83333 3.7026 3.7 1.83594 6 1.83594C6.27333 1.83594 6.5 1.60927 6.5 1.33594C6.5 1.0626 6.27333 0.835938 6 0.835938C3.15333 0.835938 0.833333 3.15594 0.833333 6.0026C0.833333 6.27594 1.06 6.5026 1.33333 6.5026Z" fill="#62D0B6"/>
+              </svg>
+              <span class="custom-topnav__text unicode" dir="ltr">{{ phone }}</span>
+            </a>
+          {% endif %}
+
+          {% if phone and store.contacts.email %}
+            <span class="custom-topnav__separator">|</span>
+          {% endif %}
+
+          {% if store.contacts.email %}
+            <a href="mailto:{{ store.contacts.email }}" class="custom-topnav__contact-item">
+              <img src="{{ 'images/email.svg' | asset }}" width="16" height="16" alt="" class="custom-topnav__icon">
+              <span class="custom-topnav__text unicode" dir="ltr">{{ store.contacts.email }}</span>
+            </a>
+          {% endif %}
+        </div>
+
+        {# LEFT SIDE (RTL): Navigation Menu #}
+        <nav class="custom-topnav__menu">
+          <a href="{{ link('contact') }}" class="custom-topnav__menu-link">
+            {{ trans('blocks.header.contact_us') }}
+          </a>
           {% if important_links %}
             <salla-menu source="footer" topnav></salla-menu>
           {% endif %}
-
-          {# Language & Currency Component #}
-          <div class="header-buttons">
-              {% if store.settings.is_multilingual or store.settings.currencies_enabled %}
-                  <button type="button" onclick="salla.event.dispatch('localization::open')" class="btn--rounded-gray basis-0">
-                      <span>{{ user.language.name }}</span>
-                      <span class="mx-1.5">|</span> <span>{{ currency.symbol }}</span>
-                  </button>
-                  <salla-localization-modal></salla-localization-modal>
-              {% endif %}
-          </div>
-
-          {# Scopes | Branches #}
-          {% if store.scope %}
-              <button class="btn--rounded-gray"
-                      onclick="salla.event.dispatch('scopes::open', {'mode': 'default'})">
-                  <i class="sicon-location rtl:ml-1 ltr:mr-1"></i> {{ store.scope.name }}
-              </button>
-          {% endif %}
-
-          {# Search bar #}
-          <div class="header-search flex-1">
-            <salla-search inline oval height="36"></salla-search>
-          </div>
+        </nav>
       </div>
 
-      <salla-contacts is-header></salla-contacts>
+      {# Mobile: centered phone & email only #}
+      <div class="custom-topnav__mobile">
+        {% set phone = store.contacts.phone ?? store.contacts.mobile %}
+        {% if phone %}
+          <a href="tel:{{ phone }}" class="custom-topnav__contact-item">
+            <svg class="custom-topnav__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.36797 15.1693C5.1213 15.1693 5.91464 14.9893 6.73464 14.6426C7.53464 14.3026 8.3413 13.8359 9.12797 13.2693C9.90797 12.6959 10.6613 12.0559 11.3746 11.3559C12.0813 10.6426 12.7213 9.88927 13.288 9.11594C13.8613 8.31594 14.3213 7.51594 14.648 6.7426C14.9946 5.91594 15.168 5.11594 15.168 4.3626C15.168 3.8426 15.0746 3.34927 14.8946 2.88927C14.708 2.41594 14.408 1.97594 14.0013 1.59594C13.488 1.08927 12.9013 0.835938 12.2746 0.835938C12.0146 0.835938 11.748 0.895938 11.5213 1.0026C11.2613 1.1226 11.0413 1.3026 10.8813 1.5426L9.33464 3.7226C9.19464 3.91594 9.08797 4.1026 9.01464 4.28927C8.92797 4.48927 8.8813 4.68927 8.8813 4.8826C8.8813 5.13594 8.95464 5.3826 9.09464 5.61594C9.19464 5.79594 9.34797 5.98927 9.5413 6.1826L9.99464 6.65594C9.98797 6.67594 9.9813 6.68927 9.97464 6.7026C9.89464 6.8426 9.73464 7.0826 9.42797 7.4426C9.1013 7.81594 8.79463 8.15594 8.48797 8.46927C8.09464 8.85594 7.76797 9.1626 7.4613 9.41594C7.0813 9.73594 6.83463 9.89594 6.68797 9.96927L6.7013 10.0026L6.21463 9.5226C6.00797 9.31594 5.80797 9.1626 5.61464 9.0626C5.24797 8.83594 4.7813 8.79594 4.31463 8.98927C4.1413 9.0626 3.95463 9.1626 3.75463 9.3026L1.5413 10.8759C1.29463 11.0426 1.11464 11.2559 1.00797 11.5093C0.907969 11.7626 0.861302 11.9959 0.861302 12.2293C0.861302 12.5493 0.934635 12.8693 1.07464 13.1693C1.21464 13.4693 1.38797 13.7293 1.60797 13.9693C1.98797 14.3893 2.4013 14.6893 2.8813 14.8826C3.3413 15.0693 3.8413 15.1693 4.36797 15.1693Z" fill="#62D0B6"/><path d="M3.66667 6.4974C3.94 6.4974 4.16667 6.27073 4.16667 5.9974C4.16667 5.7574 4.40667 5.2574 4.80667 4.83073C5.2 4.41073 5.63333 4.16406 6 4.16406C6.27333 4.16406 6.5 3.9374 6.5 3.66406C6.5 3.39073 6.27333 3.16406 6 3.16406C5.35333 3.16406 4.67333 3.51073 4.08 4.14406C3.52667 4.7374 3.16667 5.46406 3.16667 5.9974C3.16667 6.27073 3.39333 6.4974 3.66667 6.4974Z" fill="#62D0B6"/><path d="M1.33333 6.5026C1.60667 6.5026 1.83333 6.27594 1.83333 6.0026C1.83333 3.7026 3.7 1.83594 6 1.83594C6.27333 1.83594 6.5 1.60927 6.5 1.33594C6.5 1.0626 6.27333 0.835938 6 0.835938C3.15333 0.835938 0.833333 3.15594 0.833333 6.0026C0.833333 6.27594 1.06 6.5026 1.33333 6.5026Z" fill="#62D0B6"/></svg>
+            <span class="custom-topnav__text unicode" dir="ltr">{{ phone }}</span>
+          </a>
+        {% endif %}
+        {% if phone and store.contacts.email %}
+          <span class="custom-topnav__separator">|</span>
+        {% endif %}
+        {% if store.contacts.email %}
+          <a href="mailto:{{ store.contacts.email }}" class="custom-topnav__contact-item">
+            <svg class="custom-topnav__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.4317 13.8863H2.56585C1.91557 13.8854 1.29217 13.6267 0.832397 13.1669C0.372621 12.707 0.114007 12.0835 0.113281 11.4333V4.56195C0.114007 3.91171 0.372636 3.28831 0.832425 2.82852C1.29221 2.36873 1.91561 2.1101 2.56585 2.10938H13.4317C14.082 2.1101 14.7054 2.36871 15.1653 2.82849C15.6251 3.28827 15.8839 3.91167 15.8847 4.56195V11.4333C15.884 12.0836 15.6253 12.7071 15.1654 13.167C14.7056 13.6269 14.082 13.8856 13.4317 13.8863ZM2.56585 3.25223C2.21861 3.2526 1.88569 3.3907 1.64015 3.63624C1.39461 3.88178 1.2565 4.2147 1.25614 4.56195V11.4333C1.25638 11.7806 1.39443 12.1136 1.63998 12.3593C1.88554 12.6049 2.21853 12.7431 2.56585 12.7434H13.4317C13.779 12.7431 14.1121 12.6049 14.3577 12.3593C14.6033 12.1137 14.7415 11.7806 14.7419 11.4333V4.56195C14.7414 4.21466 14.6032 3.88174 14.3575 3.63621C14.1119 3.39068 13.779 3.2526 13.4317 3.25223H2.56585Z" fill="#62D0B6"/><path d="M7.99185 9.53718C7.5124 9.5419 7.04535 9.38488 6.66613 9.09147L0.555046 4.22153C0.436532 4.12702 0.360415 3.9893 0.343441 3.83867C0.326466 3.68804 0.370024 3.53684 0.464532 3.41833C0.55904 3.29981 0.696756 3.2237 0.847386 3.20672C0.998015 3.18975 1.14922 3.23331 1.26773 3.32781L7.37699 8.19776C7.55746 8.32576 7.77338 8.39425 7.99464 8.39368C8.2159 8.39311 8.43147 8.3235 8.61127 8.19456L14.6451 3.3301C14.763 3.23498 14.9139 3.1906 15.0645 3.20672C15.2151 3.22284 15.3532 3.29813 15.4483 3.41604C15.5434 3.53395 15.5878 3.68481 15.5717 3.83544C15.5556 3.98607 15.4803 4.12413 15.3624 4.21924L9.33036 9.0837C8.94852 9.38228 8.47653 9.54219 7.99185 9.53718Z" fill="#62D0B6"/></svg>
+            <span class="custom-topnav__text unicode" dir="ltr">{{ store.contacts.email }}</span>
+          </a>
+        {% endif %}
+      </div>
+
     </div>
   </div>
 
-  {# Main Nav #}
+  {# Main Nav (unchanged) #}
   <div id="mainnav" class="main-nav-container shadow-default bg-white flex items-center">
       <div class="inner bg-inherit w-full">
           <div class="container">
-              <div class="flex items-stretch justify-between relative">
-                  <div class="flex items-center">
+              <div class="mainnav-inner flex flex-wrap items-center relative">
+
+                  {# ── Left: burger + logo (order-1 always) ── #}
+                  <div class="flex items-center shrink-0 order-1">
                       <a class="lg:hidden mburger mburger--collapse leading-none rtl:ml-4 ltr:mr-4" href="#mobile-menu" aria-label="Open-menu">
                         <i class="sicon-menu text-primary text-2xl"></i>
                       </a>
@@ -62,9 +100,20 @@
                             <h2 class="sr-only">{{ store.name }}</h2>
                           {% endif %}
                       </a>
-                      <custom-main-menu></custom-main-menu>
                   </div>
-                  <div class="flex items-center justify-end my-2.5">
+
+                  {# Mobile menu — rendered by custom-main-menu, triggered by burger above #}
+                  <custom-main-menu class="contents"></custom-main-menu>
+
+                  {# ── Center: search bar ──
+                       Desktop (lg+): flex-1, sits between logo and buttons in row-1
+                       Mobile:        order-3 → wraps to row-2 at full width          #}
+                  <div class="mainnav-search order-3 lg:order-2 w-full lg:w-auto flex-1 lg:mx-6 py-2 lg:py-0">
+                      <salla-search class="search-bar" id="header-search" inline></salla-search>
+                  </div>
+
+                  {# ── Right: user + cart (order-2 on mobile → stays row-1 right side) ── #}
+                  <div class="flex items-center justify-end my-2.5 shrink-0 order-2 lg:order-3 rtl:mr-auto ltr:ml-auto lg:rtl:mr-0 lg:ltr:ml-0">
                       {% if user.type=='user' %}
                         <salla-user-menu avatar-only show-header></salla-user-menu>
                       {% else %}
@@ -75,9 +124,19 @@
                       <salla-cart-summary class="ml-4 rtl:ml-[unset] rtl:mr-4">
                         <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
                       </salla-cart-summary>
+                      
                   </div>
+
               </div>
           </div>
       </div>
   </div>
+
+  {# ── Dark Category Navigation Bar (desktop only) ── #}
+  <div class="category-bar">
+    <div class="container">
+      {% component 'header.menu' %}
+    </div>
+  </div>
+
 </header>

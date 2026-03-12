@@ -1,3 +1,8 @@
+
+/* ============================================================
+   NavigationMenu — <custom-main-menu>
+   The main header menu (desktop mega-menu + mobile slide-out)
+   ============================================================ */
 class NavigationMenu extends HTMLElement {
     connectedCallback() {
         salla.onReady()
@@ -19,41 +24,19 @@ class NavigationMenu extends HTMLElement {
             });
     }
 
-    /** 
-    * Check if the menu has children
-    * @param {Object} menu
-    * @returns {Boolean}
-    */
     hasChildren(menu) {
         return menu?.children?.length > 0;
     }
 
-    /**
-    * Check if the menu has products
-    * @param {Object} menu
-    * @returns {Boolean}
-    */
     hasProducts(menu) {
         return menu?.products?.length > 0;
     }
 
-    /**
-    * Get the classes for desktop menu
-    * @param {Object} menu
-    * @param {Boolean} isRootMenu
-    * @returns {String}
-    */
     getDesktopClasses(menu, isRootMenu) {
         return `!hidden lg:!block ${isRootMenu ? 'root-level lg:!inline-block' : 'relative'} ${menu.products ? ' mega-menu' : ''}
         ${this.hasChildren(menu) ? ' has-children' : ''}`
     }
 
-    /**
-    * Get the mobile menu
-    * @param {Object} menu
-    * @param {String} displayAllText
-    * @returns {String}
-    */
     getMobileMenu(menu, displayAllText) {
         const menuImage = menu.image ? `<img src="${menu.image}" class="rounded-full" width="48" height="48" alt="${menu.title}" />` : '';
 
@@ -79,13 +62,6 @@ class NavigationMenu extends HTMLElement {
         </li>`;
     }
 
-    /**
-    * Get the desktop menu
-    * @param {Object} menu
-    * @param {Boolean} isRootMenu
-    * @param {String} additionalClasses
-    * @returns {String}
-    */
     getDesktopMenu(menu, isRootMenu, additionalClasses = '') {
         return `
         <li class="${this.getDesktopClasses(menu, isRootMenu)} ${additionalClasses}" ${menu.attrs} data-menu-item>
@@ -106,10 +82,6 @@ class NavigationMenu extends HTMLElement {
         </li>`;
     }
 
-    /**
-    * Get the menus
-    * @returns {String}
-    */
     getMenus() {
         return this.menus.map((menu) => `
             ${this.getMobileMenu(menu, this.displayAllText)}
@@ -117,10 +89,6 @@ class NavigationMenu extends HTMLElement {
         `).join('\n');
     }
 
-    /**
-    * Create More dropdown menu
-    * @returns {String}
-    */
     createMoreDropdown() {
         if (this.overflowMenus.length === 0) return '';
 
@@ -137,25 +105,17 @@ class NavigationMenu extends HTMLElement {
         </li>`;
     }
 
-    /*
-    * Initialize responsive menu functionality
-    */
     initializeResponsiveMenu() {
-        if (window.innerWidth < 1024) return; // Only for desktop
+        if (window.innerWidth < 1024) return;
 
         const mainMenu = this.querySelector('.main-menu');
         if (!mainMenu) return;
 
-        // Check if more menu is enabled from global window variable set in master.twig
         const isMoreMenuEnabled = window.enable_more_menu;
-        if (!isMoreMenuEnabled) {
-            // If disabled, keep the menu behavior as original (no More dropdown / overflow handling)
-            return;
-        }
+        if (!isMoreMenuEnabled) return;
 
         this.checkMenuOverflow();
 
-        // Re-check on window resize
         const resizeHandler = this.debounce(() => {
             this.checkMenuOverflow();
         }, 250);
@@ -163,9 +123,6 @@ class NavigationMenu extends HTMLElement {
         window.addEventListener('resize', resizeHandler);
     }
 
-    /**
-    * Check if menu items overflow and move them to More dropdown
-    */
     checkMenuOverflow() {
         const mainMenu = this.querySelector('.main-menu');
         if (!mainMenu) return;
@@ -173,86 +130,55 @@ class NavigationMenu extends HTMLElement {
         const container = mainMenu.closest('.container');
         if (!container) return;
 
-        // Reset menus
         this.visibleMenus = [...this.menus];
         this.overflowMenus = [];
 
-        // Remove existing more dropdown
         const existingMore = mainMenu.querySelector('#more-menu-dropdown');
-        if (existingMore) {
-            existingMore.remove();
-        }
+        if (existingMore) existingMore.remove();
 
-        // Show all menu items first
         const menuItems = mainMenu.querySelectorAll('.root-level[data-menu-item]');
-        menuItems.forEach(item => {
-            item.style.display = '';
-        });
+        menuItems.forEach(item => { item.style.display = ''; });
 
-        // Calculate available width
         const containerWidth = container.offsetWidth;
         const otherElements = container.querySelector('.flex').children;
         let usedWidth = 0;
 
-        // Calculate width used by logo and other elements
         Array.from(otherElements).forEach(element => {
-            if (!element.contains(mainMenu)) {
-                usedWidth += element.offsetWidth;
-            }
+            if (!element.contains(mainMenu)) usedWidth += element.offsetWidth;
         });
 
-        const availableWidth = containerWidth - usedWidth - 300; // 300px buffer for More dropdown
+        const availableWidth = containerWidth - usedWidth - 300;
         let currentWidth = 0;
         let visibleCount = 0;
 
-        // Check each menu item
         menuItems.forEach((item, index) => {
             const itemWidth = item.offsetWidth;
-
             if (currentWidth + itemWidth <= availableWidth && index < this.menus.length) {
                 currentWidth += itemWidth;
                 visibleCount++;
             } else {
-                // Hide overflow items
                 item.style.setProperty('display', 'none', 'important');
-                if (index < this.menus.length) {
-                    this.overflowMenus.push(this.menus[index]);
-                }
+                if (index < this.menus.length) this.overflowMenus.push(this.menus[index]);
             }
         });
 
-        // Update visible menus
         this.visibleMenus = this.menus.slice(0, visibleCount);
-
-        // Add More dropdown if needed
         if (this.overflowMenus.length > 0) {
             mainMenu.insertAdjacentHTML('beforeend', this.createMoreDropdown());
         }
     }
 
-    /**
-    * Debounce function to limit resize event calls
-    * @param {Function} func
-    * @param {Number} wait
-    * @returns {Function}
-    */
     debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
+            const later = () => { clearTimeout(timeout); func(...args); };
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
     }
 
-    /**
-    * Render the header menu
-    */
     render() {
-        this.innerHTML =  `
+        this.innerHTML = `
         <nav id="mobile-menu" class="mobile-menu">
             <ul class="main-menu">${this.getMenus()}</ul>
             <button class="btn--close close-mobile-menu sicon-cancel lg:hidden"></button>
@@ -262,3 +188,5 @@ class NavigationMenu extends HTMLElement {
 }
 
 customElements.define('custom-main-menu', NavigationMenu);
+
+

@@ -1,7 +1,8 @@
 {
   "blocks": {
     "header": {
-      "cart": "Cart"
+      "cart": "Cart",
+      "contact_us": "Contact Us"
     },
     "appBanner": {
       "download_now": "download now"

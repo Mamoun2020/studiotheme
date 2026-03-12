@@ -15,12 +15,12 @@
 
     li{
       > a{
-        @apply flex justify-between items-center transition duration-300 p-3 text-sm hover:text-primary hover:no-underline; 
+        @apply flex justify-between items-center transition duration-300 p-3 text-sm hover:text-primary hover:no-underline;
       }
 
       &.root-level{
         @apply inline-block;
-        
+
         > a{
           @apply font-bold pt-0 pb-8;
         }
@@ -81,7 +81,7 @@
         ul{
           @apply p-0 m-0 border-none;
         }
-  
+
         > div{
           @apply hidden;
         }
@@ -108,17 +108,15 @@
         @apply whitespace-nowrap;
       }
 
-      // Make the More dropdown scrollable if it becomes taller than the viewport
       > .sub-menu {
         max-height: 70vh;
         overflow-y: auto;
       }
 
-      // Keep deeper levels visible inside the same column (no fly-out)
       > .sub-menu {
         .sub-menu {
           @apply static opacity-0 invisible transform-none shadow-none border-0 m-0 p-0 bg-transparent max-h-0 overflow-hidden transition-[max-height,opacity,visibility] duration-200 ease-in;
-          transition-duration: 250ms, 200ms, 200ms; 
+          transition-duration: 250ms, 200ms, 200ms;
         }
 
         li.has-children {
@@ -134,7 +132,6 @@
           }
         }
 
-        // Indent nested lists for readability
         .sub-menu > ul {
           @apply rtl:pr-4 ltr:pl-4;
         }
@@ -147,14 +144,20 @@
     border-top-left-radius: 0.375rem;
     border: none;
   }
+
+  // Hide the mobile-menu nav on desktop — it's only for the mmenu slide-out
+  .mobile-menu {
+    display: none !important;
+  }
 }
+
 // Mobile Slide Menu
 @media only screen and (max-width: 1024px) {
   .filters-opened{
     .close-filters{
       display: block !important;
     }
-  } 
+  }
   .menu-opened{
     .btn--close-sm.close-mobile-menu{
       display: block !important;
@@ -189,7 +192,7 @@
 
   .mm-spn {
     ul.main-menu li:before{
-      @apply w-2 h-2; 
+      @apply w-2 h-2;
     }
 
     &.mm-spn--navbar{
@@ -246,6 +249,189 @@
         width: 100%;
         border-color: var(--infinte-color);
       }
+    }
+  }
+}
+
+
+/* ============================================================
+   Dark Category Navigation Bar — Figma Design
+   bg: #1D1F1F | height: 44px | gap: 24px between items
+   ============================================================ */
+.category-bar {
+  @apply hidden lg:block;
+  background: #1D1F1F;
+
+  .container {
+    @apply flex items-stretch;
+  }
+
+  custom-category-bar {
+    @apply flex w-full relative overflow-hidden;
+
+    /* ── Scroll fade indicators (when items overflow) ── */
+    &.fade-start::before,
+    &.fade-end::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 48px;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    &.fade-start::before {
+      [dir="rtl"] & { right: 0; background: linear-gradient(to left, #1D1F1F, transparent); }
+      [dir="ltr"] & { left: 0;  background: linear-gradient(to right, #1D1F1F, transparent); }
+    }
+
+    &.fade-end::after {
+      [dir="rtl"] & { left: 0;  background: linear-gradient(to right, #1D1F1F, transparent); }
+      [dir="ltr"] & { right: 0; background: linear-gradient(to left, #1D1F1F, transparent); }
+    }
+  }
+
+  /* ── Item list ── */
+  &__list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+    height: 44px;
+    gap: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /* ── Single item ── */
+  &__item {
+    @apply relative flex items-center h-full flex-shrink-0;
+
+    &:hover > .category-bar__dropdown {
+      @apply visible opacity-100 translate-y-0;
+    }
+  }
+
+  /* ── Link ── */
+  &__link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    height: 100%;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) scaleX(0);
+      width: 100%;
+      height: 2px;
+      background: #62D0B6;
+      transition: transform 0.25s ease;
+    }
+
+    .is-root:hover > &::after {
+      transform: translateX(-50%) scaleX(1);
+    }
+  }
+
+  /* ── Arrow SVG ── */
+  &__arrow {
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.6);
+    transition: transform 0.25s ease, color 0.2s ease;
+
+    .has-children:hover > .category-bar__link > & {
+      color: #FFFFFF;
+      transform: rotate(180deg);
+    }
+  }
+
+  /* ── Title text ── */
+  &__title {
+    font-family: 'DIN Next LT Arabic', var(--font-main), sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.2s ease;
+
+    .category-bar__item:hover > .category-bar__link > & {
+      color: #FFFFFF;
+    }
+  }
+
+  /* ── Dropdown panel ── */
+  &__dropdown {
+    position: absolute;
+    top: 100%;
+    z-index: 30;
+    min-width: 220px;
+    background: #1D1F1F;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0 0 8px 8px;
+
+    [dir="rtl"] & { right: 0; left: auto; }
+    [dir="ltr"] & { left: 0;  right: auto; }
+
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  }
+
+  /* ── Sub-menu list ── */
+  &__sub {
+    margin: 0;
+    padding: 8px 0;
+    list-style: none;
+
+    .category-bar__item {
+      flex-shrink: unset;
+      height: auto;
+    }
+
+    .category-bar__link {
+      padding: 8px 20px;
+      height: auto;
+
+      &::after { display: none; }
+
+      .category-bar__title {
+        font-size: 14px;
+        line-height: 22px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      &:hover .category-bar__title {
+        color: #FFFFFF;
+      }
+    }
+
+    .category-bar__dropdown {
+      top: 0;
+      border-radius: 0 8px 8px 0;
+
+      [dir="rtl"] & { right: 100%; left: auto; border-radius: 8px 0 0 8px; }
+      [dir="ltr"] & { left: 100%;  right: auto; }
     }
   }
 }

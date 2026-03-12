@@ -213,3 +213,175 @@ salla-user-menu{
     @apply z-10;
   }
 }
+
+// Inline mainnav search
+.mainnav-search {
+  salla-search,
+  .search-bar {
+    @apply w-full;
+  }
+
+  .s-search-input {
+    @apply w-full bg-gray-100 border border-gray-200 rounded-lg;
+  }
+
+  .s-search-results {
+    @apply z-20;
+  }
+
+  // On mobile the search row sits between the two flex rows;
+  // give it a subtle top border to separate it visually
+  @media (max-width: theme('screens.lg')) {
+    @apply border-t border-gray-100;
+  }
+
+  // Dark mode
+  .topnav-is-dark & {
+    .s-search-input {
+      @apply bg-gray-100/10 border-gray-100/10 text-white;
+    }
+  }
+}
+
+
+/* ============================================
+   Custom Top Navbar — Figma Design
+   ============================================ */
+
+.custom-topnav {
+  @apply py-2 min-h-[40px] border-b border-gray-100;
+
+  /* ---- Desktop Layout ---- */
+  &__desktop {
+    @apply hidden lg:flex items-center justify-between;
+  }
+
+  /* ---- Contact Group (Phone + Separator + Email) ---- */
+  &__contact {
+    @apply flex items-center gap-3;
+  }
+
+  &__contact-item {
+    @apply flex items-center gap-1.5 no-underline transition-opacity duration-300;
+
+    &:hover {
+      @apply opacity-70;
+    }
+  }
+
+  &__icon {
+    @apply flex-shrink-0;
+    width: 16px;
+    height: 16px;
+  }
+
+  &__text {
+    font-family: 'DIN Next LT Arabic', var(--font-main), sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 19px;
+    color: #666666;
+    direction: ltr; /* Keep phone numbers LTR even in RTL layout */
+    unicode-bidi: embed;
+  }
+
+  /* Keep email text LTR as well */
+  a[href^="mailto"] .custom-topnav__text {
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+
+  &__separator {
+    font-size: 13px;
+    line-height: 19px;
+    color: #CCCCCC;
+    @apply mx-1;
+  }
+
+  /* ---- Menu Links (Left side in RTL) ---- */
+  &__menu {
+    @apply flex items-center gap-0;
+
+    salla-menu {
+      @apply flex items-center;
+    }
+  }
+
+  &__menu-link {
+    font-family: 'DIN Next LT Arabic', var(--font-main), sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 19px;
+    color: #666666;
+    @apply flex items-center self-stretch no-underline transition-opacity duration-300;
+    @apply ltr:pr-4 rtl:pl-4 ltr:border-r rtl:border-l border-gray-200;
+
+    &:hover {
+      @apply opacity-70;
+    }
+  }
+
+  /* ---- Mobile Layout ---- */
+  &__mobile {
+    @apply flex lg:hidden justify-center;
+  }
+
+  &__mobile-contacts {
+    @apply flex items-center justify-center gap-3;
+  }
+
+  /* ---- Dark Mode Support ---- */
+  .topnav-is-dark & {
+    @apply bg-dark border-gray-700;
+
+    .custom-topnav__text {
+      color: #CCCCCC;
+    }
+
+    .custom-topnav__separator {
+      color: #555555;
+    }
+
+    .custom-topnav__menu-link {
+      color: #CCCCCC;
+      @apply border-gray-700;
+    }
+
+    .custom-topnav__icon path {
+      fill: #62D0B6;
+    }
+  }
+
+  /* ---- Custom Background Support ---- */
+  .topnav-has-bg & {
+    @apply bg-[color:var(--topnav-bg)];
+  }
+
+  .topnav-has-gradient & {
+    @apply bg-gradient-to-r from-[color:var(--topnav-gradient-from)] to-[color:var(--topnav-gradient-to)];
+  }
+
+  .topnav-has-text-color & {
+    @apply text-[color:var(--topnav-text-color)];
+
+    .custom-topnav__text,
+    .custom-topnav__menu-link {
+      color: var(--topnav-text-color);
+    }
+  }
+}
+
+/* ---- Override salla-menu topnav items to match Figma ---- */
+.custom-topnav .s-menu-topnav-item {
+  font-family: 'DIN Next LT Arabic', var(--font-main), sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 19px;
+  color: #666666;
+
+  .topnav-is-dark & {
+    color: #CCCCCC;
+  }
+}
