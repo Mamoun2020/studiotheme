@@ -190,3 +190,53 @@ class NavigationMenu extends HTMLElement {
 customElements.define('custom-main-menu', NavigationMenu);
 
 
+/* ============================================================
+   CategoryBar — <custom-category-bar>
+   Dark horizontal navigation bar — Figma design
+   bg: #1D1F1F | height: 44px | gap: 24px | 16px white text
+   ============================================================ */
+class CategoryBar extends HTMLElement {
+    connectedCallback() {
+        salla.onReady()
+            .then(() => salla.api.component.getMenus())
+            .then(({ data }) => {
+                this.menus = data;
+                this.render();
+            })
+            .catch((error) => salla.logger.error('CategoryBar::Error fetching menus', error));
+    }
+
+    arrowSVG() {
+        return `<svg class="category-bar__arrow" width="12" height="12" viewBox="0 0 12 12"
+                     fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+    }
+
+    getItem(menu, isRoot = false) {
+        const hasChildren = menu?.children?.length > 0;
+        return `
+        <li class="category-bar__item${isRoot ? ' is-root' : ''}${hasChildren ? ' has-children' : ''}">
+            <a href="${menu.url}" class="category-bar__link" ${menu.link_attrs || ''}>
+                <span class="category-bar__title">${menu.title || ''}</span>
+                ${hasChildren ? this.arrowSVG() : ''}
+            </a>
+            ${hasChildren ? `
+            <div class="category-bar__dropdown">
+                <ul class="category-bar__sub">
+                    ${menu.children.map(child => this.getItem(child)).join('')}
+                </ul>
+            </div>` : ''}
+        </li>`;
+    }
+
+    render() {
+        this.innerHTML = `
+        <ul class="category-bar__list">
+            ${this.menus.map(menu => this.getItem(menu, true)).join('')}
+        </ul>`;
+    }
+}
+
+customElements.define('custom-category-bar', CategoryBar);
